@@ -1,6 +1,6 @@
-import express from "express";
-import cors from "cors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
 
 const app = express()
 
@@ -19,4 +19,15 @@ app.use(express.static("public"))
 // TO ACCESS COOKIES STORED ON USER DEVICE (CRUD OPERATION)
 app.use(cookieParser())
 
-export { app }
+
+//routes import
+import userRouter from './routes/user.routes.js'
+
+
+// routes declaration
+app.use("/api/v1/users", userRouter)
+
+
+
+export { app };
+
