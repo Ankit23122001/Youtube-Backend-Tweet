@@ -9,6 +9,9 @@ const registerUser = asyncHandler(async (req, res) => {
     // TAKING ALL THE DATA FROM FORM BODY
     const { fullname, email, username, password } = req.body
     // console.log(fullname, email, username, password );
+    // console.log(req.body);y
+    
+
 
     // CHECKING FOR FIELDS, NOT TO BE EMPTY
     if ([fullname, email, username, password].some((field) => field?.trim() === "")) {
@@ -16,7 +19,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     //CHECK FOR EXISTING USER
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{ email }, { username }]
     })
 
@@ -26,11 +29,18 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // UPLOAD FILES ON SERVER TEMPORARILY
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+    let coverImageLocalPath;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar is required. ")
     }
+
+    // console.log(req.files);
 
     // UPLOAD ON CLOUDINARY
     const avatar = await uploadOnCloudinary(avatarLocalPath)
@@ -58,7 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Something went wrong while registering an user.")
     }
 
-    return res.status(201).josn(
+    return res.status(201).json(
         new ApiResponse(200, createdUser, "User Registered Successfully.")
     )
 

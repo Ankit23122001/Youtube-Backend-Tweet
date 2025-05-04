@@ -6,16 +6,19 @@ import { upload } from "../middlewares/multer.middleware.js";
 const router = Router()
 
 
-// FOR UPLOADING FILE ITS A VARIABLE 
-const fileUpload = upload.fields({
-    name: "avatar",
-    maxCount: 1
-},
-    {
-        name: "coverImage",
-        maxCount: 1
-    })
 
-router.route("/register").post(fileUpload, registerUser)
+router.route('/register').post(
+    upload.fields([                  //INJECTING MIDDLEWARE FOR FILE UPLOADATATION THROUGH CLIENT
+        {
+            name: "avatar",
+            maxCount: 1
+        },
+        {
+            name: "coverImage",
+            maxCount: 1
+        }
+    ]),
+    registerUser)
 
 export default router
+
